@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from utils import time_cal
+from numba import jit
 
 @time_cal
 def clk(driver, locator, method="xpath", click_method="click", show_error=True, time=10):

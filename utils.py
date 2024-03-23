@@ -36,9 +36,10 @@ def generate_random_user_agent():
         user_agent = f"Mozilla/5.0 ({os_choice}) AppleWebKit/537.36 (KHTML, like Gecko) {browser_name}/{browser_version}"
 
     return user_agent
+    
 # Example usage
-#random_user_agent = generate_random_user_agent()
-#print(random_user_agent)
+# random_user_agent = generate_random_user_agent()
+# print(random_user_agent)
 
 
 # time decorator
@@ -51,3 +52,40 @@ def time_cal(func):
         print(f"Execution time of {func.__name__}: {end_time - start_time} seconds")
         return result
     return wrapper
+
+
+
+
+# ip changer 
+
+
+def ipchanger():
+    import os
+
+    os.system("adb shell cmd connectivity airplane-mode enable")
+    time.sleep(10)
+    os.system("adb shell cmd conenctivity airplane-mode disable")
+
+# Call the function to change ip
+# ipchanger()
+    
+
+# pinger 
+def pinger():
+    from ping3 import ping
+
+    while True:
+        # Attempt to ping google.com
+        response = ping("google.com")
+
+        # Check if the ping was successful
+        if response is not None:
+            print("Ping successful!")
+            break  # Exit the loop upon successful ping
+        else:
+            #print("Ping unsuccessful. Retrying...")
+            # Add a delay before retrying to prevent excessive attempts
+            time.sleep(1)  # You need to import time module for this line
+
+# Call the function to start pinging
+# pinger()
