@@ -100,42 +100,38 @@ def pinger():
 
 
 
+#SIGALARM
+import signal
+import functools
 
-# multiprocessing
-import threading
-import sys
+class TimeoutError(Exception):
+    pass
 
-class TimeoutThread(threading.Thread):
-    def __init__(self, target, args=(), kwargs={}, time_limit=None):
-        super().__init__()
-        self.target = target
-        self.args = args
-        self.kwargs = kwargs
-        self.time_limit = time_limit
-        self.result = None
-        self.error = None
+def timeout_handler(signum, frame):
+    raise TimeoutError("Current instance exceeded the threshold!")
 
-    def run(self):
-        try:
-            if self.time_limit is None:
-                self.result = self.target(*self.args, **self.kwargs)
-            else:
-                self.timer = threading.Timer(self.time_limit, self.handle_timeout)
-                self.timer.start()
-                self.result = self.target(*self.args, **self.kwargs)
-                self.timer.cancel()
-        except Exception as e:
-            self.error = e
+def alarm(timer=5):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(timer)
+            try:
+                result = func(*args, **kwargs)
+                signal.alarm(0)
+                return result
+            except TimeoutError as e:
+                print(f"Timeout occurred: {e}")
+                return None
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                return None
 
-    def handle_timeout(self):
-        # If the function does not complete within the time limit, raise an exception to halt execution
-        raise TimeoutError("Function execution timed out")
+        return wrapper
+    return decorator
 
-def threader(func, time_limit=None, args=(), kwargs={}):
-    thread = TimeoutThread(target=func, args=args, kwargs=kwargs, time_limit=time_limit)
-    thread.start()
-    thread.join()  # Wait for the thread to finish
-    if thread.error:
-        raise thread.error
-    return thread.result
 
+# Note
+# used to create exception by interruption by SIGALARM signal 
+# How to use 
+''' @alarm(timer=60) '''
