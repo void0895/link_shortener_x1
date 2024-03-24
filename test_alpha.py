@@ -1,12 +1,14 @@
 # Test alpha
 
-from driver_instance import create_driver
-from utils import time_cal
+from driver_instance import bypass_driver, create_driver
+from utils import time_cal, pinger, ipchanger, parallel
 from clicks import clk
 import time 
 
 @time_cal
 def test_alpha():
+    #ipchanger()
+    pinger()
     driver = create_driver()
     driver.get("https://urllinkshort.in/3OL3")
     clk(driver, "suntechu.in", method="partial_link_text")
@@ -25,10 +27,11 @@ def test_alpha():
     print("t7")
     clk(driver, "CloseAd", method="id", click_method="js", time=5, show_error=False)
     print("t8")
-    time.sleep(5)
-    clk(driver, "body > section > div > div > div > div > div:nth-child(3) > a", method="css_selector")
+    clk(driver, "body > section > div > div > div > div > div:nth-child(3) > a", method="css_selector", wait_click=1)
+    print("t9")
     time.sleep(1)
-
-
+    driver.quit()
 
 test_alpha()
+
+
