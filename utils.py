@@ -66,16 +66,20 @@ def ipchanger():
     import os
 
     os.system("adb shell cmd connectivity airplane-mode enable")
-    time.sleep(5)
-    os.system("adb shell cmd conenctivity airplane-mode disable")
+    time.sleep(4)
+    os.system("adb shell cmd connectivity airplane-mode disable")
+    #os.system("systemd-resolve --flush-caches")
 
 # Call the function to change ip
 # ipchanger()
     
 
 # pinger 
+@time_cal
 def pinger():
     from ping3 import ping
+    import time
+    import os
 
     while True:
         # Attempt to ping google.com
@@ -84,6 +88,7 @@ def pinger():
         # Check if the ping was successful
         if response is not None:
             print("Ping successful!")
+            #os.system("systemd-resolve --flush-caches")
             break  # Exit the loop upon successful ping
         else:
             #print("Ping unsuccessful. Retrying...")
@@ -97,45 +102,40 @@ def pinger():
 
 
 # multiprocessing
-@time_cal
-def parallel(*funcs, time_limit=5, lock=True):
-    import multiprocessing
-    import time
-    """
-    Run given functions in parallel with multiprocessing.
-    
-    Args:
-        *funcs: Variable length list of functions to run in parallel.
-        time_limit (int): The maximum time in seconds for each function to run (default: 60).
-        lock (bool): Whether to lock all multiprocessing functions to wait for others (default: True).
-    """
-    processes = []
-    start_time = time.time()
+import threading
+import sys
 
-    for func in funcs:
-        p = multiprocessing.Process(target=func)
-        processes.append(p)
-        p.start()
+class TimeoutThread(threading.Thread):
+    def __init__(self, target, args=(), kwargs={}, time_limit=None):
+        super().__init__()
+        self.target = target
+        self.args = args
+        self.kwargs = kwargs
+        self.time_limit = time_limit
+        self.result = None
+        self.error = None
 
-        if lock:
-            p.join()
+    def run(self):
+        try:
+            if self.time_limit is None:
+                self.result = self.target(*self.args, **self.kwargs)
+            else:
+                self.timer = threading.Timer(self.time_limit, self.handle_timeout)
+                self.timer.start()
+                self.result = self.target(*self.args, **self.kwargs)
+                self.timer.cancel()
+        except Exception as e:
+            self.error = e
 
-        # Check if the maximum time limit has been exceeded
-        if time.time() - start_time == time_limit:
-            print("Time limit reached. Stopping further processes.")
-            break
+    def handle_timeout(self):
+        # If the function does not complete within the time limit, raise an exception to halt execution
+        raise TimeoutError("Function execution timed out")
 
-    # Wait for all processes to finish if not locked
-    if not lock:
-        for p in processes:
-            p.join()
+def threader(func, time_limit=None, args=(), kwargs={}):
+    thread = TimeoutThread(target=func, args=args, kwargs=kwargs, time_limit=time_limit)
+    thread.start()
+    thread.join()  # Wait for the thread to finish
+    if thread.error:
+        raise thread.error
+    return thread.result
 
-# Example functions:
-#def myfunc():
-    #print("Function 1 called.")
-    #time.sleep(2)  # Simulate some processing time
-#def myfunc2():
-    #print("Function 2 called.")
-    #time.sleep(1)  # Simulate some processing time
-# Example usage:
-#run_parallel_functions(myfunc, myfunc2, time_limit=5, lock=True)
