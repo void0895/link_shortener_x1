@@ -17,7 +17,7 @@ def create_driver():
     # You can customize other browser options as needed 
     # options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument(f"user-agent={user_agent}")
-    options.add_argument("--disable-images") 
+    options.add_argument("--disable-image-loading") 
     options.add_argument("--disable-javascript")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
@@ -39,11 +39,12 @@ def bypass_driver():
     options = uc.ChromeOptions()
     options.binary_location = browser_path
     options.add_argument(f"--user-agent={user_agent}")
-    options.add_argument("--disable-images") 
+    options.add_argument("--disable-image-loading") 
     options.add_argument("--disable-javascript")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")
+    options.add_argument("--disable-extensions")
     options.page_load_strategy = 'eager' 
     driver = uc.Chrome(driver_executable_path=driver_path, options=options, version_main = 122)
     return driver

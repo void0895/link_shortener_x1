@@ -1,16 +1,17 @@
 # Test alpha
 
 from driver_instance import bypass_driver, create_driver
-from utils import time_cal, pinger, ipchanger, parallel
-from clicks import clk
-import time 
+from utils import time_cal, pinger, ipchanger, threader
+from clicks import clk, search
+import time ,sys
 
 @time_cal
 def test_alpha():
-    #ipchanger()
+    ipchanger()
     pinger()
-    driver = create_driver()
-    driver.get("https://urllinkshort.in/3OL3")
+    driver = bypass_driver()
+    short_url = "https://urllinkshort.in/3OL3"
+    search(driver, short_url, text_to_find="network", max_retries=10)
     clk(driver, "suntechu.in", method="partial_link_text")
     print("t1")
     clk(driver, "CloseAd", method="id", click_method="js", time=5, show_error=False)
@@ -32,6 +33,10 @@ def test_alpha():
     time.sleep(1)
     driver.quit()
 
-test_alpha()
 
-
+while True:
+    try:
+        test_alpha()  # Call the function test_alpha()
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        continue  # If an error occurs, continue to the next iteration to rerun the function

@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from utils import time_cal
 import time
@@ -88,6 +90,7 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
     except Exception as e:
         if show_error:
             print(f"An error occurred: {e}")
+            sys.exit()
         return None
 
 
@@ -104,5 +107,31 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
 # click_method -  normal click
 # time - 10s
 # show_error - True 
+
+
+def search(driver, url, text_to_find=None, max_retries=3, retry_delay=2):
+    retries = 0
+    while retries < max_retries:
+        try:
+            driver.get(url)
+            if text_to_find is None:
+                return
+            elif text_to_find in driver.page_source:
+                retries += 1
+                time.sleep(retry_delay)
+            else:
+                return
+        except NoSuchElementException:
+            retries += 1
+            time.sleep(retry_delay)
+        except WebDriverException as e:
+            error_message = str(e)
+            if "net::ERR_NAME_NOT_RESOLVED" in error_message or "net::ERR_ADDRESS_UNREACHABLE" in error_message:
+                retries += 1
+                time.sleep(retry_delay)
+            else:
+                raise  # Reraise other WebDriverExceptions
+
+
 
 
