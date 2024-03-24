@@ -90,7 +90,7 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
     except Exception as e:
         if show_error:
             print(f"An error occurred: {e}")
-            raise
+            raise Exception("Error from clk!. Locator-", locator)
         return None
 
 
@@ -130,7 +130,10 @@ def search(driver, url, text_to_find=None, max_retries=3, retry_delay=2):
                 retries += 1
                 time.sleep(retry_delay)
             else:
-                raise  # Reraise other WebDriverExceptions
+                driver.quit()
+                raise Exception("Webdriver related error!")  # Reraise other WebDriverExceptions
+        
+        
 
 
 

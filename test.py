@@ -4,6 +4,7 @@ import time
 from clicks import clk
 user_agent = generate_random_user_agent()
 
+
 @time_cal
 def create_driver(user_agent):
     browser_path='/usr/bin/thorium-browser'
@@ -40,7 +41,8 @@ def test_alpha():
     print("t7")
     clk(driver, "CloseAd", method="id", click_method="js", time=5, show_error=False)
     print("t8")
-    clk(driver, "/html/body/section/div/div/div/div/div[1]/a", method="xpath")
+    clk(driver, "/html/body/section/div/div/div/div/div[1]/a", method="xpath", click_method="action_chains")
+    time.sleep(20)
 
 
 test_alpha()
