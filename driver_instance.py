@@ -43,7 +43,7 @@ def bypass_driver():
     options.add_argument("--disable-javascript")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    options.add_argument("--headless=new")
+    #options.add_argument("--headless=new")
     options.add_argument("--disable-extensions")
     options.page_load_strategy = 'eager' 
     driver = uc.Chrome(driver_executable_path=driver_path, options=options, version_main = 122)
