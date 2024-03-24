@@ -53,17 +53,20 @@ def time_cal(func):
         return result
     return wrapper
 
-
+# How to use
+# @time_cal
+# def anyfunc():
 
 
 # ip changer 
 
 
 def ipchanger():
+    import time
     import os
 
     os.system("adb shell cmd connectivity airplane-mode enable")
-    time.sleep(10)
+    time.sleep(5)
     os.system("adb shell cmd conenctivity airplane-mode disable")
 
 # Call the function to change ip
@@ -89,3 +92,50 @@ def pinger():
 
 # Call the function to start pinging
 # pinger()
+
+
+
+
+# multiprocessing
+@time_cal
+def parallel(*funcs, time_limit=5, lock=True):
+    import multiprocessing
+    import time
+    """
+    Run given functions in parallel with multiprocessing.
+    
+    Args:
+        *funcs: Variable length list of functions to run in parallel.
+        time_limit (int): The maximum time in seconds for each function to run (default: 60).
+        lock (bool): Whether to lock all multiprocessing functions to wait for others (default: True).
+    """
+    processes = []
+    start_time = time.time()
+
+    for func in funcs:
+        p = multiprocessing.Process(target=func)
+        processes.append(p)
+        p.start()
+
+        if lock:
+            p.join()
+
+        # Check if the maximum time limit has been exceeded
+        if time.time() - start_time == time_limit:
+            print("Time limit reached. Stopping further processes.")
+            break
+
+    # Wait for all processes to finish if not locked
+    if not lock:
+        for p in processes:
+            p.join()
+
+# Example functions:
+#def myfunc():
+    #print("Function 1 called.")
+    #time.sleep(2)  # Simulate some processing time
+#def myfunc2():
+    #print("Function 2 called.")
+    #time.sleep(1)  # Simulate some processing time
+# Example usage:
+#run_parallel_functions(myfunc, myfunc2, time_limit=5, lock=True)
