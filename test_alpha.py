@@ -1,11 +1,12 @@
 # Test alpha
 
 from driver_instance import bypass_driver, create_driver
-from utils import time_cal, pinger, ipchanger, threader
+from utils import time_cal, pinger, ipchanger, alarm
 from clicks import clk, search
-import time ,sys
+import time
 
 @time_cal
+@alarm(timer=60)
 def test_alpha():
     ipchanger()
     pinger()
@@ -32,6 +33,9 @@ def test_alpha():
     print("t9")
     time.sleep(1)
     driver.quit()
+
+
+
 
 
 while True:

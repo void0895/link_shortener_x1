@@ -8,7 +8,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from utils import time_cal
-import time
+import time, sys
 
 
 
@@ -90,7 +90,7 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
     except Exception as e:
         if show_error:
             print(f"An error occurred: {e}")
-            sys.exit()
+            raise
         return None
 
 
