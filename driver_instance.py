@@ -38,14 +38,15 @@ def bypass_driver():
     driver_path='/opt/thorium-browser/chromedriver'
     options = uc.ChromeOptions()
     options.binary_location = browser_path
+    options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
     options.add_argument(f"--user-agent={user_agent}")
     options.add_argument("--disable-image-loading") 
     options.add_argument("--disable-javascript")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    #options.add_argument("--headless=new")
+    options.add_argument("--headless=new")
     options.add_argument("--disable-extensions")
-    options.page_load_strategy = 'eager' 
+    options.page_load_strategy = 'none' 
     driver = uc.Chrome(driver_executable_path=driver_path, options=options, version_main = 122)
     return driver
     

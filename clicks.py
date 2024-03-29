@@ -3,9 +3,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from utils import time_cal
 import time, sys
@@ -27,7 +25,7 @@ class element_enabled(object):
         return element.is_enabled() and "disabled" not in element.get_attribute("class")
         
 @time_cal
-def clk(driver, locator, method="xpath", click_method="click", wait_click=0, show_error=True, time=10):
+def clk(driver, locator, method="xpath", click_method="click", wait_click=0, show_error=True, time=10, send_keys_value=None):
     """
     Find and optionally click a web element based on the specified locating strategy and clicking method.
 
@@ -39,6 +37,7 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
         wait_click: Whether to wait for the element to be clickable before clicking (default is 0, which means off).
         show_error: Whether to print error messages (default is True).
         time: Maximum time to wait for the element to be located (default is 10 seconds).
+        send_keys_value: The text to send if using the 'send_keys' click method (default is None).
 
     Returns:
         The located WebElement object if found and clicked successfully, None otherwise.
@@ -80,7 +79,7 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
         elif click_method.lower() == "action_chains":
             ActionChains(driver).move_to_element(element).click().perform()
         elif click_method.lower() == "send_keys":
-            element.send_keys(Keys.RETURN)
+            element.send_keys(send_keys_value)  # Send keys provided in send_keys_value
         elif click_method.lower() == "javascript_click":
             driver.execute_script("arguments[0].dispatchEvent(new Event('click'));", element)
         else:
@@ -89,9 +88,10 @@ def clk(driver, locator, method="xpath", click_method="click", wait_click=0, sho
         return element
     except Exception as e:
         if show_error:
-            print(f"An error occurred: {e}")
+            driver.quit()
             raise Exception("Error from clk!. Locator-", locator)
         return None
+
 
 
 # Usage examples:
@@ -113,7 +113,8 @@ def search(driver, url, text_to_find=None, max_retries=3, retry_delay=2):
     retries = 0
     while retries < max_retries:
         try:
-            driver.get(url)
+            #driver.get(url)
+            driver.execute_script("window.location.href = '{}';".format(url))
             if text_to_find is None:
                 return
             elif text_to_find in driver.page_source:

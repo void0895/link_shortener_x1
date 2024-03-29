@@ -135,3 +135,15 @@ def alarm(timer=5):
 # used to create exception by interruption by SIGALARM signal 
 # How to use 
 ''' @alarm(timer=60) '''
+
+
+
+# Recaptcha solver
+@time_cal
+def captcha_solve(driver):
+    from selenium_recaptcha_solver import RecaptchaSolver
+    from selenium.webdriver.common.by import By
+    
+    solver = RecaptchaSolver(driver=driver)
+    iframe = driver.find_element(By.XPATH, '//iframe[@title="reCAPTCHA"]')
+    solver.click_recaptcha_v2(iframe=iframe)
