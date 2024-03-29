@@ -3,16 +3,16 @@
 from driver_instance import bypass_driver, create_driver
 from utils import time_cal, pinger, ipchanger, alarm
 from clicks import clk, search
-import time, sys
+import time
 
 @time_cal
 @alarm(timer=60)
 def test_alpha():
-    ipchanger()
-    pinger()
+    #ipchanger()
+    #pinger()
     driver = bypass_driver()
     short_url = "https://urllinkshort.in/3OL3"
-    search(driver, short_url, text_to_find="network", max_retries=10, retry_delay=10)
+    search(driver, short_url, text_to_find="network", max_retries=101)
     clk(driver, "suntechu.in", method="partial_link_text")
     print("t1")
     clk(driver, "CloseAd", method="id", click_method="js", time=5, show_error=False)
