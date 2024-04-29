@@ -30,7 +30,7 @@ def create_driver():
 
 
 @time_cal
-def bypass_driver():
+def bypass_driver(headless=1, save=0, random=1):
     from utils import generate_random_user_agent
     import undetected_chromedriver as uc
     user_agent = generate_random_user_agent()
@@ -38,15 +38,19 @@ def bypass_driver():
     driver_path='/opt/thorium-browser/chromedriver'
     options = uc.ChromeOptions()
     options.binary_location = browser_path
-    options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-    options.add_argument(f"--user-agent={user_agent}")
+    if random == 1:
+        options.add_argument(f"--user-agent={user_agent}")
     options.add_argument("--disable-image-loading") 
     options.add_argument("--disable-javascript")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    options.add_argument("--headless=new")
+    if headless == 0:
+        options.add_argument("--headless=new")
     options.add_argument("--disable-extensions")
-    options.page_load_strategy = 'none' 
+    options.page_load_strategy = 'none'
+    options.add_argument("--disk-cache-dir=disk_cache")
+    if save:
+        options.add_argument(f"--user-data-dir={save}")
     driver = uc.Chrome(driver_executable_path=driver_path, options=options, version_main = 122)
     return driver
     
